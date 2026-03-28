@@ -16,7 +16,48 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  
+  backend:
+    image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+    container_name: camt053-backend
+    working_dir: /app/backend
+    command: >
+      sh -c "uv sync &&
+             uv run alembic upgrade head &&
+             uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    environment:
+      CAMT053_APP_NAME: CAMT.053 Processing API
+      CAMT053_APP_VERSION: 0.1.0
+      CAMT053_DATABASE_URL: postgresql+psycopg://camt_user:camt_pass@postgres:5432/camt053_mvp
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - backend_venv:/app/backend/.venv
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    image: node:20-alpine
+    container_name: camt053-frontend
+    working_dir: /app/frontend
+    command: >
+      sh -c "npm install &&
+             npm run start -- --host 0.0.0.0 --port 4200 --poll 1000"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./:/app
+      - frontend_node_modules:/app/frontend/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 volumes:
   postgres_data:
-
+  backend_venv:
+  frontend_node_modules:

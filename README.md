@@ -8,6 +8,20 @@ Dieses Repository enthaelt ein einfaches MVP-Setup mit:
 ## PostgreSQL via Docker Compose
 
 ```bash
+docker compose up
+docker compose down
+```
+
+Startet die komplette Dev-Umgebung:
+
+- PostgreSQL auf `localhost:5433`
+- FastAPI (Hot Reload) auf <http://localhost:8000>
+- OpenAPI auf <http://localhost:8000/docs>
+- Angular (Hot Reload) auf <http://localhost:4200>
+
+Wenn du nur die DB starten willst:
+
+```bash
 docker compose up -d postgres
 docker compose stop postgres
 docker compose start postgres
@@ -16,7 +30,7 @@ docker compose down
 
 Externer DB-Port: `5433` (intern bleibt PostgreSQL auf `5432`).
 
-## Frontend starten
+## Frontend lokal starten (optional)
 
 ```bash
 cd frontend
@@ -26,7 +40,7 @@ npm start
 
 App: <http://localhost:4200>
 
-## Backend starten
+## Backend lokal starten (optional)
 
 ```bash
 cd backend

@@ -1,0 +1,18 @@
+0 verbose cli /usr/local/bin/node /opt/homebrew/bin/npm
+1 info using npm@11.6.0
+2 info using node@v22.12.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/amm/Documents/00_Privat/02_Programmieren_Projekte/vd-camt-053-processing/frontend/.npmrc
+5 silly config load:file:/Users/amm/.npmrc
+6 silly config load:file:/opt/homebrew/etc/npmrc
+7 verbose title npm start$
+8 verbose argv "start$"
+9 verbose logfile logs-max:10 dir:/Users/amm/Documents/00_Privat/02_Programmieren_Projekte/vd-camt-053-processing/frontend/.npm_cache/_logs/2026-03-28T06_59_02_058Z-
+10 verbose logfile /Users/amm/Documents/00_Privat/02_Programmieren_Projekte/vd-camt-053-processing/frontend/.npm_cache/_logs/2026-03-28T06_59_02_058Z-debug-0.log
+11 silly logfile done cleaning log files
+12 verbose cwd /Users/amm/Documents/00_Privat/02_Programmieren_Projekte/vd-camt-053-processing/frontend
+13 verbose os Darwin 24.6.0
+14 verbose node v22.12.0
+15 verbose npm  v11.6.0
+16 verbose exit 1
+17 verbose code 1
