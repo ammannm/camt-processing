@@ -1,3 +1,3 @@
-from app.models.item import Item
+from app.models.booking_entry import BookingEntry
 
-__all__ = ["Item"]
+__all__ = ["BookingEntry"]

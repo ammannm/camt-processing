@@ -48,6 +48,9 @@ Dieses Dokument definiert, wie Agenten in diesem Repository arbeiten sollen, um 
 - API-Aenderungen muessen im OpenAPI-Schema sichtbar sein.
 - Frontend konsumiert API nur ueber dedizierte Service-Layer.
 - Kleine, nachvollziehbare Commits pro Feature/Fix.
+- CAMT.053 Upload wird zuerst nur geparst und im UI bearbeitet; Persistenz passiert pro Datensatz erst bei explizitem Save.
+- DB-Feldnamen sind Englisch, `snake_case`, PostgreSQL-kompatibel.
+- Normalisierung von Buchungstexten erfolgt nur im Backend.
 
 ## Definition of Done
 
@@ -56,4 +59,3 @@ Dieses Dokument definiert, wie Agenten in diesem Repository arbeiten sollen, um 
 - API-Dokumentation ist unter `/docs` nutzbar.
 - Keine offensichtlichen Lint-/Typfehler.
 - README ist bei Setup-Aenderungen aktualisiert.
-

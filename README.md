@@ -41,6 +41,10 @@ OpenAPI: <http://localhost:8000/docs>
 ## Erste API Calls
 
 ```bash
-curl -X GET http://localhost:8000/api/v1/items
-curl -X POST http://localhost:8000/api/v1/items -H "Content-Type: application/json" -d '{"name":"Neue Verarbeitung","description":"MVP Test"}'
+curl -X POST http://localhost:8000/api/v1/camt053/parse \
+  -F "file=@/pfad/zu/deiner/datei.xml"
+
+curl -X POST http://localhost:8000/api/v1/booking-entries \
+  -H "Content-Type: application/json" \
+  -d '{"original_booking_text":"ALT","new_booking_text":"NEU","account_number":"ABC123"}'
 ```
