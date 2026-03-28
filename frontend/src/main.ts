@@ -7,5 +7,7 @@ import { AppComponent } from "./app/app.component";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 bootstrapApplication(AppComponent, {
-  providers: [provideAnimations(), provideHttpClient()]
+  providers: [
+    provideAnimations(),provideHttpClient()
+  ]
 }).catch((error) => console.error(error));

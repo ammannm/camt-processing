@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
-from app.crud.booking_entry import create_booking_entry
+from app.crud.booking_entry import create_booking_entry, update_booking_entry
 from app.db.session import get_db
+from app.models.booking_entry import BookingEntry
 from app.schemas.booking import (
     BookingEntryRead,
     BookingEntrySaveRequest,
@@ -41,3 +42,21 @@ def save_booking_entry(
     text_source = payload.new_booking_text or payload.original_booking_text
     normalized_text = normalize_booking_text(text_source)
     return create_booking_entry(db, payload, normalized_text)
+
+
+@router.put(
+    "/booking-entries/{entry_id}",
+    response_model=BookingEntryRead,
+)
+def overwrite_booking_entry(
+    entry_id: int,
+    payload: BookingEntrySaveRequest,
+    db: Session = Depends(get_db),
+):
+    entry = db.get(BookingEntry, entry_id)
+    if not entry:
+        raise HTTPException(status_code=404, detail="Booking entry not found.")
+
+    text_source = payload.new_booking_text or payload.original_booking_text
+    normalized_text = normalize_booking_text(text_source)
+    return update_booking_entry(db, entry, payload, normalized_text)

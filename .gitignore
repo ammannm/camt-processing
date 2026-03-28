@@ -13,3 +13,5 @@ backend/mvp.db
 *.pyo
 .DS_Store
 test_data
+.npm_cache
+.npm_cache/*
