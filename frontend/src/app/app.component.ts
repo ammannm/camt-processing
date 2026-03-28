@@ -46,10 +46,9 @@ interface BookingEntryApiResponse {
 }
 
 @Component({
-  selector: "app-root",
-  standalone: true,
-  imports: [CommonModule, AgGridAngular],
-  templateUrl: "./app.component.html"
+    selector: "app-root",
+    imports: [CommonModule, AgGridAngular],
+    templateUrl: "./app.component.html"
 })
 export class AppComponent {
   private readonly apiBaseUrl = "http://localhost:8000/api/v1";
