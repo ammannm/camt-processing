@@ -1,64 +1,57 @@
-# CAMT.053 Processing MVP Basis
+# Electron Hockey Booking App
 
-Dieses Repository enthaelt ein einfaches MVP-Setup mit:
+This repository contains the **Electron** migration of the original Python booking application. The project is split into a **main process**, a **preload** layer, and a **renderer** built with React + TypeScript.
 
-- `frontend/`: Angular + AG Grid + Tailwind
-- `backend/`: FastAPI + SQLAlchemy + Alembic + `uv`
-
-## PostgreSQL via Docker Compose
+## Development Setup
 
 ```bash
-docker compose up
-docker compose down
-```
-
-Startet die komplette Dev-Umgebung:
-
-- PostgreSQL auf `localhost:5433`
-- FastAPI (Hot Reload) auf <http://localhost:8000>
-- OpenAPI auf <http://localhost:8000/docs>
-- Angular (Hot Reload) auf <http://localhost:4200>
-
-Wenn du nur die DB starten willst:
-
-```bash
-docker compose up -d postgres
-docker compose stop postgres
-docker compose start postgres
-docker compose down
-```
-
-Externer DB-Port: `5433` (intern bleibt PostgreSQL auf `5432`).
-
-## Frontend lokal starten (optional)
-
-```bash
-cd frontend
+# Install dependencies (only once)
 npm install
+```
+
+### Start in Development Mode
+
+```bash
+# Build renderer (React) with Vite hot‑reload
+npm run dev:renderer
+
+# In a separate terminal build the main & preload (no hot‑reload)
+npm run build:main
+
+# Start Electron
 npm start
 ```
 
-App: <http://localhost:4200>
+The renderer will be served from `http://localhost:5173` (default Vite port). The main process will launch the Electron window and expose an IPC API.
 
-## Backend lokal starten (optional)
+## Build & Packaging
 
-```bash
-cd backend
-uv sync
-uv run alembic upgrade head
-uv run uvicorn app.main:app --reload --port 8000
+To create a distributable package you can use tools like `electron-builder` or `pkg`. The current setup only builds the main process; add a build script for packaging if needed.
+
+## Folder Structure
+
+```
+Electron/
+├─ package.json
+├─ tsconfig.json
+├─ electron.vite.config.ts  # Main Process build
+├─ renderer.vite.config.ts  # Renderer build
+├─ src/
+│  ├─ main/                # Electron main process
+│  │  ├─ index.ts
+│  │  └─ services/
+│  ├─ preload/             # Preload API
+│  │  └─ index.ts
+│  ├─ renderer/            # React UI
+│  │  ├─ main.tsx
+│  │  └─ components/
+│  └─ shared/              # Types & IPC contract
+│     ├─ types.ts
+│     └─ ipc-contract.ts
+└─ MIGRATION_PLAN.md
 ```
 
-API: <http://localhost:8000>
-OpenAPI: <http://localhost:8000/docs>
-
-## Erste API Calls
-
-```bash
-curl -X POST http://localhost:8000/api/v1/camt053/parse \
-  -F "file=@/pfad/zu/deiner/datei.xml"
-
-curl -X POST http://localhost:8000/api/v1/booking-entries \
-  -H "Content-Type: application/json" \
-  -d '{"original_booking_text":"ALT","new_booking_text":"NEU","account_number":"ABC123"}'
-```
+## Notes
+- The original Python logic is ported incrementally. See `MIGRATION_PLAN.md` for the detailed steps.
+- Logging is done via a shared Winston logger (`src/main/utils/logger.ts`).
+- IPC contracts are defined in `shared/ipc-contract.ts`.
