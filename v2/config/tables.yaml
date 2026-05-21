@@ -1,0 +1,202 @@
+# Tabellen — einmalig aus excel/template.xlsx migriert.
+# Werte sind frei editierbar; Schlüssel sind in der V2-Normalisierung (UPPERCASE, Umlaute zu AE/OE/UE).
+
+tables:
+  location_accounts:
+    columns:
+      - debit
+      - credit
+      - vat
+      - include_cost_center
+    rows:
+      KONTOUEBERTRAG:
+        debit: "2100"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: false
+      BUCHUNGSSPESEN:
+        debit: "3292"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      EFT/POS PREISE:
+        debit: "3295"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      PREIS FUER KONTOFUEHRUNG:
+        debit: "6840"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      PREIS FUER BAREINZAHLUNG:
+        debit: "6840"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      "CARD-ID: 1":
+        debit: "1005"
+        credit: "01070"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 3":
+        debit: "1005"
+        credit: "01040"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 5":
+        debit: "1005"
+        credit: "01120"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 8":
+        debit: "1005"
+        credit: "01010"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 11":
+        debit: "1005"
+        credit: "01060"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 12":
+        debit: "1005"
+        credit: "01030"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 13":
+        debit: "1005"
+        credit: "01050"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 14":
+        debit: "1005"
+        credit: "01090"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 19":
+        debit: "1005"
+        credit: "01110"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 21":
+        debit: "1005"
+        credit: "01080"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 23":
+        debit: "1005"
+        credit: "01150"
+        vat: "0"
+        include_cost_center: false
+      "CARD-ID: 26":
+        debit: "1005"
+        credit: "01140"
+        vat: "0"
+        include_cost_center: false
+      ARBEDO:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      TICINO:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      BAAR:
+        debit: "6000"
+        credit: "1005"
+        vat: "1001"
+        include_cost_center: true
+      BUETZBERG:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      CHUR:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      GLOVELIER:
+        debit: "6000"
+        credit: "1005"
+        vat: "1001"
+        include_cost_center: true
+      ITTIGEN:
+        debit: "6000"
+        credit: "1005"
+        vat: "1001"
+        include_cost_center: true
+      KLOTEN:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      LANGENTHAL:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      REINACH BL:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      VISP:
+        debit: "6000"
+        credit: "1005"
+        vat: "1001"
+        include_cost_center: true
+      WIL:
+        debit: "6000"
+        credit: "1005"
+        vat: "1001"
+        include_cost_center: true
+      ZUERICH:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+      REINACH:
+        debit: "6000"
+        credit: "1005"
+        vat: "0"
+        include_cost_center: true
+  cost_centers:
+    columns:
+      - value
+    rows:
+      ARBEDO:
+        value: "91110"
+      TICINO:
+        value: "91110"
+      BAAR:
+        value: "91070"
+      BUETZBERG:
+        value: "91060"
+      CHUR:
+        value: "91030"
+      GLOVELIER:
+        value: "91120"
+      ITTIGEN:
+        value: "91050"
+      KLOTEN:
+        value: "91010"
+      LANGENTHAL:
+        value: "91060"
+      REINACH BL:
+        value: "91090"
+      VISP:
+        value: "91140"
+      ZUERICH:
+        value: "91040"
+      SEEWEN SZ:
+        value: "91150"
+      CAMORINO:
+        value: "91110"
+      WIL SG:
+        value: "91080"
+      PREISE:
+        value: "99999"

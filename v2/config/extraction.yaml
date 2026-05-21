@@ -1,0 +1,192 @@
+# §2/§3 Feldextraktion + Transformationen.
+#
+# Ein Eintrag pro Klasse (Klassen-ID aus classes.yaml). Reihenfolge der
+# Felder ist relevant: spätere Felder dürfen via {feldname} auf frühere
+# zugreifen.
+
+extraction:
+
+  own_account_deposit:
+    text_date:
+      extract: { regex: "VOM\\s*(\\d{2}\\.\\d{2}\\.\\d{4})" }
+    card_id:
+      extract: { regex: "CARD-ID:\\s*(\\d+)" }
+    location:
+      extract: { template: "CARD-ID: {card_id}" }
+    transaction_text:
+      extract: { template: "CARD-ID: {card_id} | {text_date}" }
+    payment_type:
+      extract: { static: "Bareinzahlung" }
+
+  transfer:
+    text_date:
+      extract: { token: { position: first } }
+    account_ref:
+      extract: { token: { position: last } }
+    transaction_text:
+      extract: { template: "Kontoübertrag {account_ref}" }
+      transform:
+        - max_length:
+            limit: 39
+            fallback_template: "KU {account_ref}"
+
+  rent:
+    location:
+      extract: { token: { position: last_n, count: 2 } }
+      transform:
+        - remove_pattern: "\\s*SHOP\\s*"
+        - trim: true
+    transaction_text:
+      extract: { token: { position: last_n, count: 3 } }
+      transform:
+        - replace_literal: { from: "PP", to: "MIETE" }
+
+  twint:
+    debit_credit_amount:
+      extract: { regex: "GROSS:\\s*(-?\\d+(?:\\.\\d+)?)" }
+      transform:
+        - to_decimal: {}
+    fee_amount:
+      extract: { regex: "FEES:\\s*(-?\\d+(?:\\.\\d+)?)" }
+      transform:
+        - to_decimal: {}
+        - absolute_value: true
+    location:
+      extract: { regex: "TWINT\\s+((?:(?!TWINT).)+?)\\s+PAY\\s*OUT" }
+      transform:
+        - strip_known_prefixes: { registry: twint_shop_prefixes }
+        - trim: true
+      required: true
+      required_message: "TWINT-Ortsangabe nicht erkennbar im Text"
+      include_source_on_error: true
+    ref_text:
+      extract: { regex: "REFERENZEN:\\s*([^-]+)" }
+      transform:
+        - trim: true
+    transaction_text:
+      extract: { template: "{ref_text} {location}" }
+    payment_type:
+      extract: { static: "TWINT" }
+
+  cash_register_system:
+    payment_type:
+      extract: { token: { position: first_part_last_word, delimiter: "/" } }
+    debit_credit_amount:
+      # Captures the decimal between the first and second slashes:
+      #   "...MITTEILUNGEN: TWINT/ 146.10/NR..." -> 146.10
+      extract: { regex: "\\/\\s*(-?\\d+\\.\\d+)\\/" }
+      transform:
+        - to_decimal: {}
+    fee_amount:
+      extract: { regex: "KOM\\.\\s*(\\d+\\.\\d+)\\/" }
+      transform:
+        - to_decimal: {}
+        - absolute_value: true
+    text_date:
+      extract: { regex: "DAT\\.(\\d{2}\\.\\d{2}\\.\\d{4})" }
+    location:
+      extract: { regex: "\\/([^\\/]+)\\s+SPESENBETRAG" }
+      transform:
+        - strip_known_prefixes: { registry: twint_shop_prefixes }
+        - trim: true
+      required: true
+      required_message: "Worldline-Ort nicht erkennbar (kein '/...SPESENBETRAG'-Muster im Text)"
+      include_source_on_error: true
+    transaction_text:
+      extract: { template: "{payment_type} {location} {text_date}" }
+      transform:
+        - max_length:
+            limit: 39
+            fallback_template: "{payment_type} {location}"
+            move_field_to_overflow:
+              from_field: text_date
+              to_field: out_additional_text
+
+  manual:
+    transaction_text:
+      extract: { full_text: {} }
+      transform:
+        - conditional_prefix:
+            from_field: direction
+            when_value: CRDT
+            then: "Gutschrift: "
+            else: "Lastschrift: "
+    payment_type:
+      extract:
+        conditional:
+          from_field: direction
+          when_value: CRDT
+          then: "Manuell Gutschrift"
+          else: "Manuell Lastschrift"
+
+  eft_pos_credit:
+    text_date:
+      extract: { regex: "VOM\\s*(\\d{2}\\.\\d{2}\\.\\d{4})" }
+    location:
+      extract: { token: { position: last_n, count: 2 } }
+      transform:
+        - remove_pattern: "\\(CH\\)"
+        - trim: true
+    payment_type:
+      extract: { static: "EFT/POS Gutschrift" }
+    transaction_text:
+      extract: { template: "Postcard {text_date} {location}" }
+      transform:
+        - max_length:
+            limit: 39
+            fallback_template: "Postcard {location}"
+            move_field_to_overflow:
+              from_field: text_date
+              to_field: out_additional_text
+
+  eft_pos_expenses:
+    text_date:
+      extract: { regex: "VOM\\s*(\\d{2}\\.\\d{2}\\.\\d{4})" }
+    location:
+      extract: { token: { position: last_n, count: 2 } }
+      transform:
+        - remove_pattern: "\\(CH\\)"
+        - trim: true
+      required: true
+      required_message: "EFT/POS-Spesen-Ort nicht erkennbar (letzte zwei Tokens im Text)"
+      include_source_on_error: true
+    payment_type:
+      extract: { static: "EFT/POS Spesen" }
+    transaction_text:
+      extract: { template: "Spesen vom {text_date} {location}" }
+      transform:
+        - max_length:
+            limit: 39
+            fallback_template: "Spesen {text_date}"
+            move_field_to_overflow:
+              from_field: location
+              to_field: out_additional_text
+
+  credit_account_management:
+    transaction_text:
+      extract: { static: "Preis für Kontoführung" }
+    location:
+      extract: { static: "Preise" }
+    payment_type:
+      extract: { static: "Kontoführung" }
+
+  credit_cash_deposits:
+    card_number:
+      extract: { regex: "KARTEN\\s*NR\\.\\s*(\\S+)" }
+    account_number_full:
+      extract: { regex: "URSPRUNGS[- ]KONTONUMMER:\\s*(\\S+)" }
+    account_number_short:
+      extract: { template: "{account_number_full}" }
+      transform:
+        - take_last_n_chars: 4
+    transaction_text:
+      extract:
+        template: "Preis Bareinzahlung Karte Nr.: {card_number} Konto: {account_number_short}"
+      transform:
+        - max_length:
+            limit: 39
+            fallback_template: "Karte Nr.: {card_number} Konto: {account_number_short}"
+    location:
+      extract: { static: "Preise" }
+    payment_type:
+      extract: { static: "Bareinzahlung" }

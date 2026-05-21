@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+.env
+.env.*
+*.log
+logs/
+.npm_cache/
+ausgabe/
+ausgaben/
+*.csv
+*.xlsx
+*.pdf

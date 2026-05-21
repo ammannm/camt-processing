@@ -1,0 +1,423 @@
+/* ---------- design tokens (mirror of tokens.ts) ---------- */
+:root {
+  /* neutrals */
+  --c-bg: #f8fafc;
+  --c-surface: #ffffff;
+  --c-surface-muted: #f1f5f9;
+  --c-border: #e2e8f0;
+  --c-border-strong: #cbd5e1;
+  --c-text: #0f172a;
+  --c-text-muted: #475569;
+  --c-text-subtle: #94a3b8;
+  /* primary — indigo */
+  --c-primary: #4f46e5;
+  --c-primary-hover: #4338ca;
+  --c-primary-light: #eef2ff;
+  --c-primary-border: #c7d2fe;
+  /* semantic */
+  --c-danger: #dc2626;
+  --c-danger-hover: #b91c1c;
+  --c-danger-light: #fef2f2;
+  --c-danger-border: #fecaca;
+  --c-success: #16a34a;
+  --c-success-light: #f0fdf4;
+  --c-success-border: #bbf7d0;
+  --c-warning: #d97706;
+  --c-warning-light: #fffbeb;
+  --c-warning-border: #fde68a;
+
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+  --r-xl: 12px;
+
+  --sh-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --sh-md: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --sh-lg: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* ---------- reset / base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--c-text);
+}
+
+h1 {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+h2 {
+  font-size: 20px;
+}
+h3 {
+  font-size: 16px;
+}
+h4 {
+  font-size: 14px;
+  color: var(--c-text);
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 0.92em;
+  background: var(--c-surface-muted);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--c-text);
+}
+
+p {
+  margin: 0;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  appearance: none;
+  border: 1px solid var(--c-border-strong);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background 100ms, border-color 100ms, color 100ms, transform 50ms;
+  white-space: nowrap;
+  user-select: none;
+}
+.btn:hover:not(:disabled) {
+  background: var(--c-surface-muted);
+  border-color: var(--c-border-strong);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 1px;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  border-color: var(--c-primary-hover);
+}
+
+.btn-danger {
+  background: var(--c-surface);
+  border-color: var(--c-danger-border);
+  color: var(--c-danger);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--c-danger-light);
+  border-color: var(--c-danger);
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--c-surface-muted);
+}
+
+.btn-icon {
+  padding: 4px 8px;
+  font-size: 12px;
+  min-width: 28px;
+}
+
+/* ---------- inputs (scoped: only bare HTML elements outside Mantine) ---------- */
+.raw-input,
+textarea.raw-input,
+select.raw-input {
+  appearance: none;
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  color: var(--c-text);
+  width: 100%;
+  transition: border-color 100ms, box-shadow 100ms;
+}
+.raw-input:hover:not(:disabled) {
+  border-color: var(--c-border-strong);
+}
+.raw-input:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px var(--c-primary-light);
+}
+.raw-input:disabled {
+  background: var(--c-surface-muted);
+  color: var(--c-text-muted);
+  cursor: not-allowed;
+}
+textarea.raw-input {
+  resize: vertical;
+  min-height: 80px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--sh-sm);
+  transition: box-shadow 150ms, border-color 150ms;
+}
+.card:hover {
+  border-color: var(--c-border-strong);
+}
+
+/* ---------- tabs (top-level) ---------- */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: 24px;
+}
+.tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 16px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  margin-bottom: -1px;
+  transition: color 100ms, border-color 100ms;
+}
+.tab:hover {
+  color: var(--c-text);
+}
+.tab.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+}
+
+/* ---------- pills (sub-tabs / chips) ---------- */
+.pill {
+  appearance: none;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  color: var(--c-text-muted);
+  transition: all 100ms;
+}
+.pill:hover {
+  background: var(--c-surface-muted);
+  color: var(--c-text);
+}
+.pill.active {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: white;
+}
+
+/* ---------- sidebar entries ---------- */
+.sidebar-entry {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--c-text);
+  cursor: pointer;
+  border-radius: var(--r-md);
+  transition: background 100ms;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+.sidebar-entry:hover {
+  background: var(--c-surface-muted);
+}
+.sidebar-entry.active {
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+/* ---------- status boxes ---------- */
+.status {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  font-size: 12px;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface-muted);
+  color: var(--c-text-muted);
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+.status-success {
+  background: var(--c-success-light);
+  border-color: var(--c-success-border);
+  color: var(--c-success);
+}
+.status-error {
+  background: var(--c-danger-light);
+  border-color: var(--c-danger-border);
+  color: var(--c-danger);
+}
+.status-warning {
+  background: var(--c-warning-light);
+  border-color: var(--c-warning-border);
+  color: var(--c-warning);
+}
+
+/* ---------- tables ---------- */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+.data-table thead th {
+  background: var(--c-surface-muted);
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--c-text-muted);
+  border-bottom: 1px solid var(--c-border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.data-table tbody td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--c-border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+.data-table tbody tr:hover {
+  background: var(--c-surface-muted);
+}
+.data-table tbody tr.error-row {
+  background: var(--c-danger-light);
+}
+.data-table tbody tr.edited-row {
+  background: var(--c-warning-light);
+}
+
+/* ---------- form layout ---------- */
+.field {
+  margin-bottom: 12px;
+}
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text);
+  margin-bottom: 4px;
+}
+.field-hint {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--c-text-subtle);
+  line-height: 1.4;
+}
+
+/* ---------- inline editing inputs (table cells) ---------- */
+.cell-input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  border-radius: 3px;
+}
+.cell-input:hover {
+  border-color: var(--c-border);
+  background: var(--c-surface);
+}
+.cell-input:focus {
+  border-color: var(--c-primary);
+  background: var(--c-surface);
+  box-shadow: 0 0 0 2px var(--c-primary-light);
+}
+
+/* ---------- drop zone ---------- */
+.dropzone {
+  border: 2px dashed var(--c-border-strong);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  text-align: center;
+  color: var(--c-text-muted);
+  background: var(--c-surface-muted);
+  transition: all 150ms;
+}
+.dropzone:hover,
+.dropzone.dragging {
+  border-color: var(--c-primary);
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+}
+
+/* ---------- misc ---------- */
+.muted {
+  color: var(--c-text-muted);
+}
+.subtle {
+  color: var(--c-text-subtle);
+}
+.danger {
+  color: var(--c-danger);
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}

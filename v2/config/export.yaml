@@ -1,0 +1,42 @@
+export_profiles:
+  dt_import:
+    description: Dataforce-Buchungsimport
+    format: xlsx
+    outputs:
+      - columns:
+          - header: Buchungsdatum
+            from_field: booking_date
+            format: date_ddmmyyyy
+          - header: Beleg-Nr.
+            from_field: document_number
+          - header: Belegdatum
+            from_field: booking_date
+            format: date_ddmmyyyy
+          - header: Konto Soll
+            from_field: out_debit
+          - header: Konto Haben
+            from_field: out_credit
+          - header: MWSt-Code
+            from_field: out_vat
+          - header: Währung
+            from_field: currency
+          - header: Betrag FW
+            from_field: out_amount
+            format: number_two_decimals
+          - header: Betrag BW
+            from_field: out_amount
+            format: number_two_decimals
+          - header: Kurs
+            from_field: exchange_rate
+          - header: Text
+            from_field: out_text
+          - header: Zusatztext
+            from_field: out_additional_text
+          - header: PC Soll
+            from_field: out_cost_center
+          - header: PC Haben
+            from_field: out_cost_center_credit
+          - header: Klasse
+            from_field: _class
+          - header: Fehler
+            from_field: _errors

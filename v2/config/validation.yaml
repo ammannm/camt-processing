@@ -1,0 +1,39 @@
+# §7/§10 Validierung — klassenagnostische Mussfelder am Output.
+#
+# Regeln laufen nach der Pipeline gegen jede Ergebniszeile. Treffer hängen
+# eine Fehlermeldung an `row.errors[]` und erscheinen in der "Fehler"-Spalte
+# des Exports. Der Export wird dadurch NICHT umgeleitet — der Benutzer sieht
+# die Fehler im UI und kann vor dem Export manuell nacharbeiten.
+#
+# Pseudo-Felder in `condition.field` und in Templates:
+#   _class       — Klassen-ID der Zeile
+#   _has_errors  — true bei vorhandenen Fehlern
+#   _errors      — Fehler als "; "-separierte Zeichenkette
+#   _error_count — Anzahl Fehler
+
+validation:
+  rules:
+
+    # Sollkonto: bei allen Klassen ausser den explizit nicht-mappenden.
+    - condition: { field: out_debit, absent: true }
+      field: out_debit
+      message: "Sollkonto fehlt"
+      exclude_classes: [manual, _unclassified]
+
+    # Habenkonto: dito.
+    - condition: { field: out_credit, absent: true }
+      field: out_credit
+      message: "Habenkonto fehlt"
+      exclude_classes: [manual, _unclassified]
+
+    # Buchungstext darf nicht leer sein.
+    - condition: { field: out_text, absent: true }
+      field: out_text
+      message: "Buchungstext fehlt"
+      exclude_classes: [_unclassified]
+
+    # Betrag muss gesetzt sein.
+    - condition: { field: out_amount, absent: true }
+      field: out_amount
+      message: "Betrag fehlt"
+      exclude_classes: [_unclassified]

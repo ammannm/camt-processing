@@ -1,0 +1,258 @@
+# §5 + §6 Pipeline-Schritte pro Klasse.
+#
+# Schreibt in die `out_*`-Output-Felder (von export.yaml referenziert):
+#   out_debit, out_credit, out_vat, out_cost_center, out_amount, out_text,
+#   out_additional_text, out_error
+# Hilfsfelder beginnen mit _ (z.B. _include_cc).
+
+pipeline:
+
+  # ---------------------------------------------------------------------------
+  # Klassen mit statischem Tabellen-Schlüssel
+  # (Habenkonto kommt direkt aus location_accounts, kein Matrix-Override)
+  # ---------------------------------------------------------------------------
+
+  transfer:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_static: KONTOUEBERTRAG
+          match: { mode: exact_normalized }
+          assign:
+            out_debit: debit
+            out_credit: credit
+            out_vat: vat
+            _include_cc: include_cost_center
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  credit_account_management:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_static: PREIS FUER KONTOFUEHRUNG
+          match: { mode: exact_normalized }
+          assign:
+            out_debit: debit
+            out_credit: credit
+            out_vat: vat
+            _include_cc: include_cost_center
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  credit_cash_deposits:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_static: PREIS FUER BAREINZAHLUNG
+          match: { mode: exact_normalized }
+          assign:
+            out_debit: debit
+            out_credit: credit
+            out_vat: vat
+            _include_cc: include_cost_center
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  eft_pos_expenses:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_static: EFT/POS PREISE
+          match: { mode: exact_normalized }
+          assign:
+            out_debit: debit
+            out_credit: credit
+            out_vat: vat
+            _include_cc: include_cost_center
+      # Kostenstelle ortsbasiert (aus extrahiertem location-Feld)
+      - when:
+          condition: { field: _include_cc, equals: true }
+          do:
+            - lookup_in_table:
+                table: cost_centers
+                key_from_field: location
+                match: { mode: fuzzy_normalized, min_similarity: 95 }
+                assign:
+                  out_cost_center: value
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  # ---------------------------------------------------------------------------
+  # Klassen mit Ort-basiertem Tabellen-Schlüssel
+  # ---------------------------------------------------------------------------
+
+  own_account_deposit:
+    steps:
+      # Exakter Match auf "CARD-ID: N"
+      - lookup_in_table:
+          table: location_accounts
+          key_from_field: location
+          match: { mode: exact_normalized }
+          assign:
+            out_debit: debit
+            out_credit: credit
+            out_vat: vat
+            _include_cc: include_cost_center
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  rent:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_field: location
+          match: { mode: exact_normalized }
+          assign:
+            out_debit: debit
+            out_credit: credit
+            out_vat: vat
+            _include_cc: include_cost_center
+      - when:
+          condition: { field: _include_cc, equals: true }
+          do:
+            - lookup_in_table:
+                table: cost_centers
+                key_from_field: location
+                match: { mode: fuzzy_normalized, min_similarity: 95 }
+                assign:
+                  out_cost_center: value
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  manual:
+    steps:
+      # Kein produktives Mapping — falls Location erkannt wird, OK; sonst leer
+      - set:
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"
+
+  # ---------------------------------------------------------------------------
+  # Klassen mit Karten-Akzeptanz (Habenkonto aus Matrix; Soll fix 1005; Fee als Zusatzbuchung)
+  # ---------------------------------------------------------------------------
+
+  twint:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_field: location
+          match: { mode: exact_normalized }
+          assign:
+            _include_cc: include_cost_center
+      - lookup_in_matrix:
+          matrix: payment_matrix
+          row_from_field: location
+          col_from_field: payment_type
+          match: { mode: exact_normalized }
+          into_field: out_credit
+      - when:
+          condition: { field: _include_cc, equals: true }
+          do:
+            - lookup_in_table:
+                table: cost_centers
+                key_from_field: location
+                match: { mode: fuzzy_normalized, min_similarity: 95 }
+                assign:
+                  out_cost_center: value
+      - set:
+          out_debit: "1005"
+          out_vat: "0"
+          out_amount: "{debit_credit_amount}"
+          out_text: "{transaction_text}"
+      # Gebühr als separate Buchungszeile
+      - emit_row:
+          condition: { field: fee_amount, greater_than: 0 }
+          row:
+            steps:
+              - lookup_in_table:
+                  table: location_accounts
+                  key_from_static: BUCHUNGSSPESEN
+                  match: { mode: exact_normalized }
+                  assign:
+                    out_debit: debit
+                    out_credit: credit
+                    out_vat: vat
+              - set:
+                  out_amount: "{fee_amount}"
+                  out_text: "Spesen {transaction_text}"
+                  payment_type: "Buchungsspesen"
+
+  cash_register_system:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_field: location
+          match: { mode: exact_normalized }
+          assign:
+            _include_cc: include_cost_center
+      - lookup_in_matrix:
+          matrix: payment_matrix
+          row_from_field: location
+          col_from_field: payment_type
+          match: { mode: exact_normalized }
+          into_field: out_credit
+      - when:
+          condition: { field: _include_cc, equals: true }
+          do:
+            - lookup_in_table:
+                table: cost_centers
+                key_from_field: location
+                match: { mode: fuzzy_normalized, min_similarity: 95 }
+                assign:
+                  out_cost_center: value
+      - set:
+          out_debit: "1005"
+          out_vat: "0"
+          out_amount: "{debit_credit_amount}"
+          out_text: "{transaction_text}"
+      - emit_row:
+          condition: { field: fee_amount, greater_than: 0 }
+          row:
+            steps:
+              - lookup_in_table:
+                  table: location_accounts
+                  key_from_static: BUCHUNGSSPESEN
+                  match: { mode: exact_normalized }
+                  assign:
+                    out_debit: debit
+                    out_credit: credit
+                    out_vat: vat
+              - set:
+                  out_amount: "{fee_amount}"
+                  out_text: "Spesen {transaction_text}"
+                  payment_type: "Buchungsspesen"
+
+  eft_pos_credit:
+    steps:
+      - lookup_in_table:
+          table: location_accounts
+          key_from_field: location
+          match: { mode: exact_normalized }
+          assign:
+            _include_cc: include_cost_center
+      - lookup_in_matrix:
+          matrix: payment_matrix
+          row_from_field: location
+          col_from_field: payment_type
+          match: { mode: exact_normalized }
+          into_field: out_credit
+      - when:
+          condition: { field: _include_cc, equals: true }
+          do:
+            - lookup_in_table:
+                table: cost_centers
+                key_from_field: location
+                match: { mode: fuzzy_normalized, min_similarity: 95 }
+                assign:
+                  out_cost_center: value
+      - set:
+          out_debit: "1005"
+          out_vat: "0"
+          out_amount: "{amount}"
+          out_text: "{transaction_text}"

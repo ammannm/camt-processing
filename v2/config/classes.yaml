@@ -1,0 +1,71 @@
+# §1 Klassifikation — 10 Klassen aus dem Altprojekt portiert.
+# Höchster Fuzzy-Score gewinnt; priority bricht Score-Gleichstände.
+
+classes:
+  - id: r_own_account_deposit
+    match_against: source_text
+    keyword: "EINZAHLUNG AUF EIGENES KONTO"
+    min_similarity: 95
+    class: own_account_deposit
+
+  - id: r_transfer
+    match_against: source_text
+    keyword: "KONTOÜBERTRAG AUF"
+    min_similarity: 90
+    class: transfer
+
+  - id: r_rent
+    match_against: source_text
+    keyword: "MIETE SHOP"
+    min_similarity: 96
+    class: rent
+
+  - id: r_twint
+    match_against: source_text
+    keyword: "TWINT ACQUIRING AG"
+    min_similarity: 95
+    class: twint
+
+  - id: r_cash_register_system
+    match_against: source_text
+    keyword: "GUTSCHRIFT AUFTRAGGEBER: WORLDLINE SCHWEIZ AG"
+    min_similarity: 95
+    class: cash_register_system
+
+  - id: r_manual_amex
+    match_against: source_text
+    keyword: "AMERICAN EXPRES"
+    min_similarity: 95
+    class: manual
+
+  - id: r_eft_pos_credit
+    match_against: source_text
+    keyword: "EFT/POS"
+    min_similarity: 95
+    filter: { field: direction, equals: CRDT }
+    class: eft_pos_credit
+
+  - id: r_eft_pos_expenses
+    match_against: source_text
+    keyword: "EFT/POS"
+    min_similarity: 95
+    filter: { field: direction, equals: DBIT }
+    class: eft_pos_expenses
+
+  - id: r_credit_account_management_umlaut
+    match_against: source_text
+    keyword: "PREIS FÜR DIE KONTOFÜHRUNG"
+    min_similarity: 96
+    class: credit_account_management
+
+  - id: r_credit_account_management_ascii
+    match_against: source_text
+    keyword: "PREIS FUER DIE KONTOFUEHRUNG"
+    min_similarity: 96
+    class: credit_account_management
+
+  - id: r_credit_cash_deposits
+    match_against: source_text
+    keyword: "PREIS FUER BAREINZAHLUNGEN EIGENES KONTO KARTEN"
+    min_similarity: 96
+    class: credit_cash_deposits

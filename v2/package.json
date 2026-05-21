@@ -1,0 +1,47 @@
+{
+  "name": "camt-processing-v2",
+  "version": "0.1.0",
+  "description": "V2 — generic, config-driven processing engine (greenfield). Spec: ../GENERIC_PRIMITIVES.md",
+  "private": true,
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev:renderer": "vite --config renderer.vite.config.ts",
+    "dev:electron": "cross-env NODE_ENV=development electron .",
+    "dev": "concurrently \"npm run dev:renderer\" \"wait-on http://localhost:5173 && npm run dev:electron\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build:main": "vite build --config electron.vite.config.ts",
+    "build:preload": "vite build --config preload.vite.config.ts",
+    "build:renderer": "vite build --config renderer.vite.config.ts",
+    "build": "npm run build:main && npm run build:preload && npm run build:renderer",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mantine/core": "^7.17.8",
+    "@mantine/hooks": "^7.17.8",
+    "@tabler/icons-react": "^3.44.0",
+    "exceljs": "^4.4.0",
+    "fast-xml-parser": "^5.8.0",
+    "fuzzball": "^2.2.6",
+    "yaml": "^2.5.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/coverage-v8": "^1.6.0",
+    "concurrently": "^8.2.0",
+    "cross-env": "^7.0.3",
+    "electron": "^42.1.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "typescript": "^5.4.0",
+    "vite": "^8.0.13",
+    "vitest": "^1.6.0",
+    "wait-on": "^7.2.0"
+  }
+}

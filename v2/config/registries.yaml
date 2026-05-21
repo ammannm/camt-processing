@@ -1,0 +1,11 @@
+# §8 Wiederverwendbare Listen.
+
+registries:
+  # Anonymisierte / generische Wortanfänge, die als „Ortsbezeichnung" mit-
+  # extrahiert werden, aber semantisch keinen Ort darstellen — werden vor
+  # dem Tabellen-Lookup abgeschnitten.
+  twint_shop_prefixes:
+    - "KUNDE ANONYM"
+    - "PRO SHOP"
+    - "SCHLEIFSERVICE"
+    - "OCHSI"
